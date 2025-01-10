@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class GridManager : MonoBehaviour
 {
-    [Range(0,10)] [SerializeField] private int columns = 3;
-    [Range(0,10)] [SerializeField] private int rows = 3;     
+    [FormerlySerializedAs("m_columns")] [FormerlySerializedAs("columns")] [Range(0,10)] [SerializeField] private int mColumns = 3;
+    [FormerlySerializedAs("rows")] [Range(0,10)] [SerializeField] private int mRows = 3;     
     [SerializeField] private Transform gridPrefab;
     [SerializeField] private float offset = 1.1f;
     [SerializeField] private Transform spawnPoint;     
@@ -13,22 +15,24 @@ public class GridManager : MonoBehaviour
     [SerializeField] private List<Transform> allGrids = new(); 
     public List<Transform> visibleGrids = new();  
 
-    private void OnValidate()
-    {
-        if (!Application.isPlaying && gridPrefab && spawnPoint)
-        {
-            UpdateGrids();
-        }
-        else
-        {
-            Debug.LogWarning("GridPrefab or spawnPoint is missing.");
-        }
-    }
+    // private void OnValidate()
+    // {
+    //     if (!Application.isPlaying && gridPrefab && spawnPoint)
+    //     {
+    //         _ = UpdateGrids(columns, rows);
+    //     }
+    //     else
+    //     {
+    //         Debug.LogWarning("GridPrefab or spawnPoint is missing.");
+    //     }
+    // }
 
     /// <summary>
     /// Updates the grid positions and visibility based on the row and column count.
     /// </summary>
-    private void UpdateGrids()
+    /// <param name="columns1"></param>
+    /// <param name="rows1"></param>
+    public Task UpdateGrids(int columns, int rows)
     {
         var amountOfGridsNeeded = columns * rows;
 
@@ -59,6 +63,8 @@ public class GridManager : MonoBehaviour
         }
 
         DisableExtraGrids(amountOfGridsNeeded);
+        
+        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -67,7 +73,7 @@ public class GridManager : MonoBehaviour
     /// <returns>A Vector3 offset for centering the grid.</returns>
     private Vector3 GetGridOffset()
     {
-        var width = (columns - 1) * offset;
+        var width = (mColumns - 1) * offset;
         return new Vector3(width / 2, 0, 0);
     }
 

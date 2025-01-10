@@ -5,7 +5,7 @@ public class GridSettings : MonoBehaviour
     public GameObject walkable;
     public GameObject nonWalkable;
     public GameObject gate;
-
+    
     private void Start()
     {
         ActivateWalkable();

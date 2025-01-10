@@ -1,9 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Objects;
 using UnityEngine;
 
-public class StandManager : MonoBehaviour
+public class StandManagerTest : MonoBehaviour
 {
 [SerializeField] List<Transform> stands = new ();
 Transform spawnPoint;
@@ -23,5 +24,10 @@ private void Start()
         stand.SetParent(transform);
     }
     transform.position = new Vector3(0, 0, 0);
+}
+
+public bool CheckForAvailablePeopleStand(CustomerAI customerAI, out Transform transform1)
+{
+    throw new NotImplementedException();
 }
 }
