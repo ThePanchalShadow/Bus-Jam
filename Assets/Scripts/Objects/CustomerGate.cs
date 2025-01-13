@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Pathfinding;
@@ -13,13 +14,20 @@ namespace Objects
 
 
         // Check if the referenced spawnGrid is available or not
-        private async void CheckSpace()
+        public async void CheckSpace()
         {
-            var pathPossible = await IsPathPossible();
-
-            if (pathPossible)
+            try
             {
-                AddCustomer();
+                var pathPossible = await IsPathPossible();
+
+                if (pathPossible)
+                {
+                    AddCustomer();
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"Error: {e} inside Customer Gate", this);
             }
         }
 
@@ -56,6 +64,16 @@ namespace Objects
 
             // Call the gate spawn animation for the customer
             _ = customer.SpawnAnimation(spawnGrid.transform.position);
+        }
+
+        public void AssignSpawnGrid(MyGrid grid)
+        {
+            spawnGrid = grid;
+            transform.LookAt(spawnGrid.transform.position);
+        }
+        public bool HasNoCustomers()
+        {
+            return assignedCustomerList.Count <= 0;
         }
     }
 }

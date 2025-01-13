@@ -64,6 +64,7 @@ public class StandManager : MonoBehaviour
         }
 
         // No stands available.
+        GameManager.Instance.CheckGameOver();
         stand = null;
         return false;
     }

@@ -7,8 +7,8 @@ using UnityEngine.Serialization;
 
 public class GridManager : MonoBehaviour
 {
-    [Range(0,10)] [SerializeField] private int columns = 3;
-    [Range(0,10)] [SerializeField] private int rows = 3;     
+    [Range(1,10)] [SerializeField] private int columns = 3;
+    [Range(1,10)] [SerializeField] private int rows = 3;     
     [FormerlySerializedAs("gridPrefab")] [SerializeField] private MyGrid myGridPrefab;
     [SerializeField] private float offset = 1.1f;
     [SerializeField] private Transform spawnPoint;     
@@ -18,7 +18,7 @@ public class GridManager : MonoBehaviour
 
     // private void OnValidate()
     // {
-    //     if (!Application.isPlaying && gridPrefab && spawnPoint)
+    //     if (!Application.isPlaying && myGridPrefab && spawnPoint)
     //     {
     //         _ = UpdateGrids(columns, rows);
     //     }
@@ -53,9 +53,10 @@ public class GridManager : MonoBehaviour
                 var grid = allGrids[index];
                 grid.gameObject.SetActive(true);
 
-                var gridPosition = new Vector3(j * offset, 0, i * offset);
+                var gridPosition = new Vector3(j * offset, 0, -(i * offset));
 
                 grid.transform.position = gridCenter + gridPosition - GetGridOffset();
+                Debug.Log($"grid.transform.position {grid.transform.position}  = gridCenter{gridCenter} + gridPosition{gridPosition} - GetGridOffset() { GetGridOffset()}");
 
                 grid.name = $"Grid ({i}, {j})";
 
@@ -75,7 +76,7 @@ public class GridManager : MonoBehaviour
     private Vector3 GetGridOffset()
     {
         var width = (columns - 1) * offset;
-        return new Vector3(width / 2, 0, 0);
+        return new Vector3(width / 2, 0, -0);
     }
 
     /// <summary>

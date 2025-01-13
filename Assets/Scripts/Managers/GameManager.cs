@@ -1,11 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using System.Threading.Tasks;
 using System;
 using Objects;
-using UnityEngine.Serialization;
-using Object = UnityEngine.Object;
 
 public class GameManager : SingletonMonoBehaviour<GameManager>
 {
@@ -33,11 +30,16 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public event Action OnGameOver;
     public event Action OnGameWin;
 
-    [SerializeField] private bool isGameCompleted = false;
+    [SerializeField] private bool isGameCompleted;
 
     #endregion
 
     #region Functions
+
+    private void Start()
+    {
+        InitializeLevel();
+    }
 
     /// <summary>
     /// Clears the current scene, destroying any existing game objects and reinitializing the level.
@@ -145,10 +147,11 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         // For each bus, instantiate 3 customers of the same color.
         foreach (var bus in busManager.spawnedBuses)
         {
+            var customerPrefab = customerPrefabsByColor.Find(x => x.colorType == bus.colorType);
             for (var i = 0; i < 3; i++)
             {
-                var customerPrefab = customerPrefabsByColor.Find(x => x.colorType == bus.colorType);
-                var customer = Instantiate(customerPrefab).GetComponent<CustomerAI>();
+                var customer = Instantiate(customerPrefab, customerManager.transform);
+                Debug.Log($"Color of {customer.name} is {customer.colorType}");
                 tempCustomerList.Add(customer);
             }
         }
@@ -156,8 +159,10 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         // Create gates and add them to the spawned gates list
         for (var i = 0; i < gateAmountToSpawn; i++)
         {
-            var gate = Instantiate(gridManager.visibleGrids[UnityEngine.Random.Range(0, gridManager.visibleGrids.Count)].GetCustomerGate());
+            var index = UnityEngine.Random.Range(0, gridManager.visibleGrids.Count);
+            var gate = gridManager.visibleGrids[index].GetCustomerGate();
             customerManager.spawnedGates.Add(gate);
+            gate.AssignSpawnGrid(gridManager.visibleGrids[index + 1]);
         }
 
         // Assign customers to gates
@@ -186,27 +191,18 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     /// <summary>
     /// Checks if the game over condition is met.
     /// </summary>
-    public bool CheckGameOver()
+    public void CheckGameOver()
     {
-        if(isGameCompleted) return false; // TODO: check this one since I am not sure if i should return false or true
+        if(isGameCompleted) return; // TODO: check this one since I am not sure if i should return false or true
 
         var allStandsFilled = standManager.occupiedStands.Count >= levelData.peopleStandAmount;
-
-        if (!allStandsFilled)
-        {
-            OnGameOver?.Invoke();
-            isGameCompleted = true;
-            return true;
-        }
-
-        if (standManager.standingPeople.Any(customerAI => customerAI.colorType == busManager.GetCurrentBus().colorType))
-        {
-            return false;
-        }
+        var colorMatchFound =
+            standManager.standingPeople.Any(customerAI => customerAI.colorType == busManager.GetCurrentBus().colorType);
+        
+        if (!allStandsFilled || colorMatchFound) return;
 
         OnGameOver?.Invoke();
         isGameCompleted = true;
-        return true;
     }
 
     /// <summary>
@@ -218,8 +214,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
         var busesEmpty = busManager.spawnedBuses.Count == 0;
         var customersEmpty = customerManager.spawnedCustomers.Count == 0;
         var allCustomerAnimationsComplete = customerManager.AreAllCustomerAnimationsComplete();
-//TODO set a way to check if all gates are empty
-// bool allGatesEmpty = customerManager.spawnedGates.All(gate => gate.GetComponent<Gate>().HasNoCustomers());
+        var allGatesEmpty = customerManager.spawnedGates.All(gate => gate.HasNoCustomers());
 
         if (busesEmpty && customersEmpty && allCustomerAnimationsComplete /*&& allGatesEmpty*/)
         {

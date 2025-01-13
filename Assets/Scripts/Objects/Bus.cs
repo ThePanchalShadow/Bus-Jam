@@ -82,6 +82,8 @@ public class Bus : MonoBehaviour
 
             return;
         }
+        
+        GameManager.Instance.customerManager.spawnedGates.ForEach(gate => gate.CheckSpace());
     }
     private void OpenDoorAnimation()
     {

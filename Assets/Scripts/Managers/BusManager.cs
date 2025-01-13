@@ -10,7 +10,7 @@ public class BusManager : MonoBehaviour
     public List<Bus> spawnedBuses = new();
     [SerializeField] private Transform spawnPoint;
     public Transform defaultTarget;
-    [SerializeField] private float offset = 2f; // Modify this offset as needed.
+    [SerializeField] private float offset = 2f;
 
     public event Action NewBusArrived;
 
@@ -32,8 +32,10 @@ public class BusManager : MonoBehaviour
         for (var i = 1; i < spawnedBuses.Count; i++)
         {
             var bus = spawnedBuses[i];
+            bus.transform.SetParent(spawnPoint);
             var newPosition = spawnPoint.position;
-            newPosition.x += i * (bus.transform.localScale.x / 2f) + offset;
+            newPosition.x += i * offset;
+            Debug.Log($"{i} * ({bus.transform.localScale.x} / 2f = {bus.transform.localScale.x / 2f}) + {offset} = { i * (bus.transform.localScale.x / 2f) + offset}");
             bus.transform.position = newPosition;
         }
     }

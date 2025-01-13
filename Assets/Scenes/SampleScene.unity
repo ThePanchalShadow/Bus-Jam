@@ -170,7 +170,7 @@ MonoBehaviour:
   spawnedStands: []
   occupiedStands: []
   standingPeople: []
-  spacing: 1.2
+  spacing: 1.15
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,8 +257,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.2588191, y: -0, z: -0, w: 0.9659258}
-  m_LocalPosition: {x: 0, y: 3.71, z: -10}
+  m_LocalRotation: {x: 0.28057766, y: -0.002879393, z: 0.0008417195, w: 0.95982665}
+  m_LocalPosition: {x: 0, y: 7.5, z: -14}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -355,7 +355,7 @@ MonoBehaviour:
   spawnedBuses: []
   spawnPoint: {fileID: 357282727}
   defaultTarget: {fileID: 55631966}
-  offset: 2
+  offset: -4.2
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -663,6 +663,93 @@ Transform:
   m_Children: []
   m_Father: {fileID: 746927071}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &866940214
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 866940216}
+  - component: {fileID: 866940215}
+  m_Layer: 0
+  m_Name: A* Star
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &866940215
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866940214}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 78396926cbbfc4ac3b48fc5fc34a87d1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 1
+  data:
+    dataString: UEsDBBQAAAgIAMArIexhDJwVkwIAAJgFAAALACQAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQGFVNtu2zAM/ZVAz9vgpF3a7m1z0nQD2gbNhj7MfVAsOhYiS4YuTdIi/15SdmI3HTDAgIzDQ/LwIr0yqV0NuTd2ZqW4NQLYtwGjf/Zp0BlvYMtXRi/kCxw4j1L4kkg8ch64lwbxIbk5U4G3Mv+uV4rICYJBy8LYaipWkBrnHcIFVw7QZI0nb43Q64BtW4dde77QOdjjXw7ag/0fK+hc8aoGQWo78uiyZY8uI01jHS2DNOdGKelaEczv6lhkymsXsAQkCMmxqJie+CXIVekpXN/5vigc+FaS5buJtNibJir7YZqGVdytG13PXAXKMz6PkpqYtx/NZ9FcWFPdHNIOE0rhS5mvH/gu5873GtqHJ+91B73has2XCh5L0HdmZk3QAo3eBnINDkaTXqhjaWkJ+brjNVpPwFB/HM6wG84+Fr9NlayWhHw5b4CFMrHdV+QDFgfzEwXHlXBtJERJxB8Hv/mqvzut4Vpa59HUJtSkbmmCJSqbxp5RMcGnxmqIcKu5Bs2V380xjD+d4Imtl/bEcs3plrTJW9th+U9cItzxk+TENDebblgOfoWqnhup/QK4zctePFeazS248j54JTV0FZHhDpuYGq2b7XP/cFsEW/C85+Zh64OFCfc83gHUhFsi+q7Y0Oihg1K0kLEKCv4Xq6DviZpccsyrIszujI635935RIuwClK8X3OWJPlFcSUSkYzGIxDF56vzr8V4dAHj4XB5dnF5xuI9kBp7ztW8aVo7Ktwg3dWicecPD9lgZnkdL56wfDOTL5XpjV/qwixyC6DvmwjHYsFiEnwgxFRILHMB3ksdd4+9ZkyZfA0iOwbKYmOnW2951kXJWC2fjSckY2l8vjJG8PFazS08S9hQ8kOwPdu/AVBLAwQUAAAICADAKyHsU3Y3oG0AAAB4AAAACQAkAG1ldGEuanNvbgoAIAAAAAAAAQAYAACAPtXesZ0BAIA+1d6xnQEAgD7V3rGdAatWKkstKs7Mz1OyUjDRM9IztNBRUEovSizIKAaKGII4pZkpIHa0koFBsnmaZYpBioGRmVFqSpqupYlpmpmReaqZoWGSsbmFsVIsUH1JZUGqX2JuKkRPQGJJRlpmXkpmXrqee1FmijvIaKXYWgBQSwECLQAUAAAICADAKyHsYQycFZMCAACYBQAACwAkAAAAAAAAAAAAAAAAAAAAZ3JhcGgwLmpzb24KACAAAAAAAAEAGAAAgD7V3rGdAQCAPtXesZ0BAIA+1d6xnQFQSwECLQAUAAAICADAKyHsU3Y3oG0AAAB4AAAACQAkAAAAAAAAAAAAAADgAgAAbWV0YS5qc29uCgAgAAAAAAABABgAAIA+1d6xnQEAgD7V3rGdAQCAPtXesZ0BUEsFBgAAAAACAAIAuAAAAJgDAAAAAA==
+    upgradeData: 
+    file_cachedStartup: {fileID: 0}
+    data_cachedStartup: 
+    cacheStartup: 0
+  showNavGraphs: 1
+  showUnwalkableNodes: 1
+  debugMode: 0
+  debugFloor: 0
+  debugRoof: 1
+  manualDebugFloorRoof: 0
+  showSearchTree: 0
+  unwalkableNodeDebugSize: 0.3
+  logPathResults: 1
+  maxNearestNodeDistance: 100
+  scanOnStartup: 1
+  fullGetNearestSearch: 0
+  prioritizeGraphs: 0
+  prioritizeGraphsLimit: 1
+  colorSettings:
+    _SolidColor: {r: 0.11764706, g: 0.4, b: 0.7882353, a: 0.9}
+    _UnwalkableNode: {r: 1, g: 0, b: 0, a: 0.5}
+    _BoundsHandles: {r: 0.29, g: 0.454, b: 0.741, a: 0.9}
+    _ConnectionLowLerp: {r: 0, g: 1, b: 0, a: 0.5}
+    _ConnectionHighLerp: {r: 1, g: 0, b: 0, a: 0.5}
+    _MeshEdgeColor: {r: 0, g: 0, b: 0, a: 0.5}
+    _AreaColors:
+    - {r: 0, g: 0, b: 0, a: 0}
+  tagNames: []
+  heuristic: 2
+  heuristicScale: 1
+  threadCount: 1
+  maxFrameTime: 1
+  batchGraphUpdates: 0
+  graphUpdateBatchingInterval: 0.2
+  euclideanEmbedding:
+    mode: 0
+    seed: 0
+    pivotPointRoot: {fileID: 0}
+    spreadOutCount: 1
+  showGraphs: 1
+--- !u!4 &866940216
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 866940214}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: -2.9700003}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1942919328}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1538271307
 GameObject:
   m_ObjectHideFlags: 0
@@ -734,13 +821,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1559902268}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: -2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1942919328}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!114 &1559902270
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -790,6 +877,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 866940216}
   - {fileID: 2017364981}
   - {fileID: 357282727}
   - {fileID: 55631966}
@@ -863,13 +951,16 @@ MonoBehaviour:
   - {fileID: 7478042146388991394, guid: 736a9fe412af64dee87f8f1bc834263c, type: 3}
   - {fileID: 7478042146388991394, guid: 278594ad0d2d044da9330fcfed7657b0, type: 3}
   - {fileID: 7478042146388991394, guid: 20fd4695a833a4c938414b1ca8718026, type: 3}
+  standPrefab: {fileID: 4101542858147057023, guid: 18f944fc5eb974ea58cd24065a1ed9e3,
+    type: 3}
   levelData:
     peopleStandAmount: 5
     gateAmountToSpawn: 1
-    gridColumnsAmount: 3
-    gridRowsAmount: 3
-  busAmountToSpawn: 0
-  gateAmountToSpawn: 0
+    gridColumnsAmount: 4
+    gridRowsAmount: 4
+  busAmountToSpawn: 3
+  gateAmountToSpawn: 1
+  standAmountToSpawn: 5
   isGameCompleted: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:

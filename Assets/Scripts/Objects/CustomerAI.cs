@@ -62,9 +62,15 @@ namespace Objects
             var startNode = AstarPath.active.GetNearest(transform.position).node;
             var endNode = AstarPath.active.GetNearest(aiPath.destination).node;
 
-            if (startNode == null || endNode == null)
+            if (startNode == null)
             {
-                Debug.LogError("Start or End node is null!");
+                Debug.LogError("Start node is null!",this);
+                return Task.CompletedTask;
+            }
+
+            if (endNode == null)
+            {
+                Debug.LogError($"End node is null! {aiPath.destination}", this);
                 return Task.CompletedTask;
             }
 
