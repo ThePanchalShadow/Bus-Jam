@@ -5,28 +5,30 @@ using System.Threading.Tasks;
 using System;
 using Objects;
 using UnityEngine.Serialization;
+using Object = UnityEngine.Object;
 
 public class GameManager : SingletonMonoBehaviour<GameManager>
 {
     #region Variables
 
+    [Header("------Managers' references------")]
     public BusManager busManager;
     public CustomerManager customerManager;
     public GridManager gridManager;
     public StandManager standManager;
-    [SerializeField] private List<GameObject> customerPrefabsByColor;
-    [SerializeField] private List<GameObject> busPrefabsByColor;
-    [SerializeField] private Transform gatePrefab;
+    
+    [Header("------Prefabs------")]
+    [SerializeField] private List<CustomerAI> customerPrefabsByColor;
+    [SerializeField] private List<Bus> busPrefabsByColor;
+    [SerializeField] private Transform standPrefab;
+    
+    [Header("------Level Data------")]
     [SerializeField] private LevelData levelData;
 
+    [Header("------ DO NOT MODIFY------")]
     [SerializeField] private int busAmountToSpawn;
     [SerializeField] private int gateAmountToSpawn;
-    [SerializeField] private int gridAmountToSpawn;
-
-    [SerializeField] private int minGridColumns = 0;
-    [SerializeField] private int maxGridColumns = 10;
-    [SerializeField] private int minGridRows = 0;
-    [SerializeField] private int maxGridRows = 10;
+    [SerializeField] private int standAmountToSpawn;
 
     public event Action OnGameOver;
     public event Action OnGameWin;
@@ -40,6 +42,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     /// <summary>
     /// Clears the current scene, destroying any existing game objects and reinitializing the level.
     /// </summary>
+    [ContextMenu("Start New Level")]
     public void ClearScene()
     {
         if (busManager)
@@ -84,14 +87,14 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     /// <summary>
     /// Initializes the level by calculating the total number of grids and determining the number of buses and gates to spawn.
     /// </summary>
-    public void InitializeLevel()
+    private void InitializeLevel()
     {
-        int totalGrids = levelData.gridColumnsAmount * levelData.gridRowsAmount;
+        var totalGrids = levelData.gridColumnsAmount * levelData.gridRowsAmount;
 
+        standAmountToSpawn = levelData.peopleStandAmount;
         busAmountToSpawn = totalGrids / 3;
-        gateAmountToSpawn = 0; // Gates are set to zero in this logic
-        gridAmountToSpawn = totalGrids;
-
+        gateAmountToSpawn = levelData.gateAmountToSpawn;
+        
         CreateGrid();
     }
 
@@ -109,47 +112,59 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     /// </summary>
     private void CreateBus()
     {
-        for (int i = 0; i < busAmountToSpawn; i++)
+        for (var i = 0; i < busAmountToSpawn; i++)
         {
-            GameObject busPrefab = busPrefabsByColor[UnityEngine.Random.Range(0, busPrefabsByColor.Count)];
-            Bus bus = Instantiate(busPrefab).GetComponent<Bus>();
+            var busPrefab = busPrefabsByColor[UnityEngine.Random.Range(0, busPrefabsByColor.Count)];
+            var bus = Instantiate(busPrefab);
             busManager.spawnedBuses.Add(bus);
         }
 
         busManager.FirstPositionAssign();
-        CreateCustomer();
+        CreateStands();
+    }
+
+    private void CreateStands()
+    {
+        for (var i = 0; i < standAmountToSpawn; i++)
+        {
+            var stand = Instantiate(standPrefab);
+            standManager.spawnedStands.Add(stand);
+        }
+        
+        standManager.FirstPositionAssign();
+        CreateCustomers();
     }
 
     /// <summary>
     /// Creates customers and assigns them to gates and the CustomerManager.
     /// </summary>
-    private void CreateCustomer()
+    private void CreateCustomers()
     {
-        List<CustomerAI> tempCustomerList = new List<CustomerAI>();
+        var tempCustomerList = new List<CustomerAI>();
 
         // For each bus, instantiate 3 customers of the same color.
-        foreach (Bus bus in busManager.spawnedBuses)
+        foreach (var bus in busManager.spawnedBuses)
         {
-            for (int i = 0; i < 3; i++)
+            for (var i = 0; i < 3; i++)
             {
-                GameObject customerPrefab = customerPrefabsByColor[UnityEngine.Random.Range(0, customerPrefabsByColor.Count)];
-                CustomerAI customer = Instantiate(customerPrefab).GetComponent<CustomerAI>();
+                var customerPrefab = customerPrefabsByColor.Find(x => x.colorType == bus.colorType);
+                var customer = Instantiate(customerPrefab).GetComponent<CustomerAI>();
                 tempCustomerList.Add(customer);
             }
         }
 
         // Create gates and add them to the spawned gates list
-        for (int i = 0; i < gateAmountToSpawn; i++)
+        for (var i = 0; i < gateAmountToSpawn; i++)
         {
-            Transform gate = Instantiate(gatePrefab);
+            var gate = Instantiate(gridManager.visibleGrids[UnityEngine.Random.Range(0, gridManager.visibleGrids.Count)].GetCustomerGate());
             customerManager.spawnedGates.Add(gate);
         }
 
         // Assign customers to gates
         foreach (var gate in customerManager.spawnedGates)
         {
-            int randomCustomerCount = UnityEngine.Random.Range(1, tempCustomerList.Count);
-            List<CustomerAI> assignedCustomers = tempCustomerList.Take(randomCustomerCount).ToList();
+            var randomCustomerCount = UnityEngine.Random.Range(1, tempCustomerList.Count);
+            var assignedCustomers = tempCustomerList.Take(randomCustomerCount).ToList();
             tempCustomerList.RemoveAll(customer => assignedCustomers.Contains(customer));
 
             foreach (var customer in assignedCustomers)
@@ -175,7 +190,7 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     {
         if(isGameCompleted) return false; // TODO: check this one since I am not sure if i should return false or true
 
-        bool allStandsFilled = standManager.occupiedStands.Count >= levelData.peopleStandAmount;
+        var allStandsFilled = standManager.occupiedStands.Count >= levelData.peopleStandAmount;
 
         if (!allStandsFilled)
         {
@@ -184,13 +199,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
             return true;
         }
 
-        foreach (var customerAI in standManager.standingPeople)
+        if (standManager.standingPeople.Any(customerAI => customerAI.colorType == busManager.GetCurrentBus().colorType))
         {
-            // Assuming there's a way to check if a bus color matches the current customer color
-            if (customerAI.colorType == busManager.GetCurrentBus().color)
-            {
-                return false;
-            }
+            return false;
         }
 
         OnGameOver?.Invoke();
@@ -204,9 +215,9 @@ public class GameManager : SingletonMonoBehaviour<GameManager>
     public void CheckWinCondition()
     {
         if(isGameCompleted) return;
-        bool busesEmpty = busManager.spawnedBuses.Count == 0;
-        bool customersEmpty = customerManager.spawnedCustomers.Count == 0;
-        bool allCustomerAnimationsComplete = customerManager.AreAllCustomerAnimationsComplete();
+        var busesEmpty = busManager.spawnedBuses.Count == 0;
+        var customersEmpty = customerManager.spawnedCustomers.Count == 0;
+        var allCustomerAnimationsComplete = customerManager.AreAllCustomerAnimationsComplete();
 //TODO set a way to check if all gates are empty
 // bool allGatesEmpty = customerManager.spawnedGates.All(gate => gate.GetComponent<Gate>().HasNoCustomers());
 

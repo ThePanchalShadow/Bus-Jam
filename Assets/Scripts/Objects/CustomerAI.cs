@@ -153,7 +153,7 @@ namespace Objects
         {
             var currentBus = GameManager.Instance.busManager.GetCurrentBus();
 
-            if (currentBus.color == colorType)
+            if (currentBus.colorType == colorType)
             {
                 currentBus.CustomerAssign(this);
             }
@@ -173,7 +173,7 @@ namespace Objects
 
             GameManager.Instance.standManager.standingPeople.Remove(this);
             
-            if (currentBus.color != colorType) return;
+            if (currentBus.colorType != colorType) return;
             currentBus.CustomerAssign(this);
             GameManager.Instance.busManager.NewBusArrived -= CheckIfNewBusIsSameColor;
         }

@@ -1,7 +1,9 @@
 using UnityEngine;  
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using DG.Tweening;
+using UnityEngine.Serialization;
 
 namespace Objects
 {
@@ -10,12 +12,14 @@ public class Bus : MonoBehaviour
 {
     #region Variables
 
-    public ColorType color;
-    [SerializeField] private List<Transform> availableSeats = new List<Transform>();
-    private Dictionary<Transform, CustomerAI> seatAssignments = new Dictionary<Transform, CustomerAI>();
-    private List<Task> customerAnimationTasks = new List<Task>();
-
+    [FormerlySerializedAs("color")] public ColorType colorType;
+    [SerializeField] private List<Transform> availableSeats = new();
+    private readonly Dictionary<Transform, CustomerAI> seatAssignments = new();
+    private readonly List<Task> customerAnimationTasks = new();
+    [SerializeField] private Transform door;
     private BusManager busManager;
+    [SerializeField] private float doorUpY = 2.4f;
+    [SerializeField] private float doorDownY = 0.8f;
 
     #endregion
 
@@ -34,7 +38,7 @@ public class Bus : MonoBehaviour
     {
         if (availableSeats.Count > 0)
         {
-            Transform seat = availableSeats[0];
+            var seat = availableSeats[0];
             availableSeats.RemoveAt(0);
             seatAssignments[seat] = customer;
 
@@ -63,26 +67,33 @@ public class Bus : MonoBehaviour
 
     private async void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent(out CustomerAI customer))
+        if (!other.TryGetComponent(out CustomerAI customer)) return;
+
+        OpenDoorAnimation();
+        
+        // Find the seat assigned to the customer
+        foreach (var seat in from entry in seatAssignments where entry.Value == customer select entry.Key)
         {
-            // Find the seat assigned to the customer
-            foreach (var entry in seatAssignments)
-            {
-                if (entry.Value == customer)
-                {
-                    Transform seat = entry.Key;
+            // Play spawn animation at the assigned seat
+            await customer.SpawnAnimation(seat.position);
+            CloseDoor();
+            // Remove the customer from CustomerManager
+            GameManager.Instance.customerManager.RemoveCustomer(customer);
 
-                    // Play spawn animation at the assigned seat
-                    await customer.SpawnAnimation(seat.position);
-
-                    // Remove the customer from CustomerManager
-                    GameManager.Instance.customerManager.RemoveCustomer(customer);
-
-                    return;
-                }
-            }
+            return;
         }
     }
+    private void OpenDoorAnimation()
+    {
+        door.DOKill();
+        door.DOLocalMoveY(doorUpY, 0.2f);
+    }
+
+    private void CloseDoor()
+    {
+        door.DOLocalMoveY(doorDownY, 0.2f);
+    }
+
 
     /// <summary>
     /// Removes this bus and updates bus positions.
@@ -121,7 +132,7 @@ public class Bus : MonoBehaviour
     /// </summary>
     public void BusGoingOutOfScreenAndDestroyAnimation()
     {
-        Vector3 offScreenPosition = transform.position + Vector3.right * 20f; // Example off-screen direction
+        var offScreenPosition = transform.position + Vector3.right * 20f; // Example off-screen direction
         transform.DOMove(offScreenPosition, 2f).SetEase(Ease.InQuad).OnComplete(() =>
         {
             Destroy(gameObject);

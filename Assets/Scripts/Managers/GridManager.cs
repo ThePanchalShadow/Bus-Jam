@@ -1,19 +1,20 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Objects;
 using UnityEngine;
 using UnityEngine.Serialization;
 
 public class GridManager : MonoBehaviour
 {
-    [FormerlySerializedAs("m_columns")] [FormerlySerializedAs("columns")] [Range(0,10)] [SerializeField] private int mColumns = 3;
-    [FormerlySerializedAs("rows")] [Range(0,10)] [SerializeField] private int mRows = 3;     
-    [SerializeField] private Transform gridPrefab;
+    [Range(0,10)] [SerializeField] private int columns = 3;
+    [Range(0,10)] [SerializeField] private int rows = 3;     
+    [FormerlySerializedAs("gridPrefab")] [SerializeField] private MyGrid myGridPrefab;
     [SerializeField] private float offset = 1.1f;
     [SerializeField] private Transform spawnPoint;     
 
-    [SerializeField] private List<Transform> allGrids = new(); 
-    public List<Transform> visibleGrids = new();  
+    [SerializeField] private List<MyGrid> allGrids = new(); 
+    public List<MyGrid> visibleGrids = new();  
 
     // private void OnValidate()
     // {
@@ -30,11 +31,11 @@ public class GridManager : MonoBehaviour
     /// <summary>
     /// Updates the grid positions and visibility based on the row and column count.
     /// </summary>
-    /// <param name="columns1"></param>
-    /// <param name="rows1"></param>
-    public Task UpdateGrids(int columns, int rows)
+    /// <param name="mColumns"></param>
+    /// <param name="mRows"></param>
+    public Task UpdateGrids(int mColumns, int mRows)
     {
-        var amountOfGridsNeeded = columns * rows;
+        var amountOfGridsNeeded = mColumns * mRows;
 
         UpdateGridsList(amountOfGridsNeeded);
 
@@ -42,11 +43,11 @@ public class GridManager : MonoBehaviour
 
         var gridCenter = spawnPoint.position;
 
-        for (var i = 0; i < rows; i++)
+        for (var i = 0; i < mRows; i++)
         {
-            for (var j = 0; j < columns; j++)
+            for (var j = 0; j < mColumns; j++)
             {
-                var index = i * columns + j;
+                var index = i * mColumns + j;
                 if (index >= allGrids.Count) continue;
 
                 var grid = allGrids[index];
@@ -54,7 +55,7 @@ public class GridManager : MonoBehaviour
 
                 var gridPosition = new Vector3(j * offset, 0, i * offset);
 
-                grid.position = gridCenter + gridPosition - GetGridOffset();
+                grid.transform.position = gridCenter + gridPosition - GetGridOffset();
 
                 grid.name = $"Grid ({i}, {j})";
 
@@ -73,7 +74,7 @@ public class GridManager : MonoBehaviour
     /// <returns>A Vector3 offset for centering the grid.</returns>
     private Vector3 GetGridOffset()
     {
-        var width = (mColumns - 1) * offset;
+        var width = (columns - 1) * offset;
         return new Vector3(width / 2, 0, 0);
     }
 
@@ -85,7 +86,7 @@ public class GridManager : MonoBehaviour
     {
         while (allGrids.Count < amountOfGridsNeeded)
         {
-            var newGrid = Instantiate(gridPrefab, spawnPoint);
+            var newGrid = Instantiate(myGridPrefab, spawnPoint);
             allGrids.Add(newGrid);
         }
     }

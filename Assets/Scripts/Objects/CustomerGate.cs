@@ -9,7 +9,7 @@ namespace Objects
     {
         // Variables
         [SerializeField] private List<CustomerAI> assignedCustomerList; // List of customers assigned to this gate
-        [SerializeField] private GridSettings spawnGrid;                      // Reference to the grid where this gate will spawn customers
+        [SerializeField] private MyGrid spawnGrid;                      // Reference to the grid where this gate will spawn customers
 
 
         // Check if the referenced spawnGrid is available or not
@@ -55,7 +55,7 @@ namespace Objects
             GameManager.Instance.customerManager.AddSpawnedCustomer(customer);
 
             // Call the gate spawn animation for the customer
-            customer.SpawnAnimation(spawnGrid.transform.position);
+            _ = customer.SpawnAnimation(spawnGrid.transform.position);
         }
     }
 }

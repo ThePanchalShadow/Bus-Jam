@@ -10,6 +10,7 @@ public class BusManager : MonoBehaviour
     public List<Bus> spawnedBuses = new();
     [SerializeField] private Transform spawnPoint;
     public Transform defaultTarget;
+    [SerializeField] private float offset = 2f; // Modify this offset as needed.
 
     public event Action NewBusArrived;
 
@@ -22,20 +23,18 @@ public class BusManager : MonoBehaviour
     /// </summary>
     public void FirstPositionAssign()
     {
-        if (spawnedBuses.Count > 0)
-        {
-            // Assign the first bus to the spawn point
-            spawnedBuses[0].transform.position = spawnPoint.position;
+        if (spawnedBuses.Count <= 0) return;
+       
+        // Assign the first bus to the spawn point
+        spawnedBuses[0].transform.position = spawnPoint.position;
 
-            // For each subsequent bus, distribute them along the x-axis with a fixed offset.
-            float offset = 2f; // Modify this offset as needed.
-            for (int i = 1; i < spawnedBuses.Count; i++)
-            {
-                Bus bus = spawnedBuses[i];
-                Vector3 newPosition = spawnPoint.position;
-                newPosition.x += i * (bus.transform.localScale.x / 2f) + offset;
-                bus.transform.position = newPosition;
-            }
+        // For each subsequent bus, distribute them along the x-axis with a fixed offset.
+        for (var i = 1; i < spawnedBuses.Count; i++)
+        {
+            var bus = spawnedBuses[i];
+            var newPosition = spawnPoint.position;
+            newPosition.x += i * (bus.transform.localScale.x / 2f) + offset;
+            bus.transform.position = newPosition;
         }
     }
 
@@ -49,8 +48,8 @@ public class BusManager : MonoBehaviour
             // Move each bus to the position of the next bus
             for (var i = 0; i < spawnedBuses.Count - 1; i++)
             {
-                Bus currentBus = spawnedBuses[i];
-                Bus nextBus = spawnedBuses[i + 1];
+                var currentBus = spawnedBuses[i];
+                var nextBus = spawnedBuses[i + 1];
 
                 // Move current bus to the next bus' position
                 currentBus.BusMovingForward(nextBus.transform.position);

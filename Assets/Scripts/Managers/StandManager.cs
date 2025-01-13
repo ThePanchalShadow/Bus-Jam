@@ -44,6 +44,7 @@ public class StandManager : MonoBehaviour
     /// <summary>
     /// Checks for an available stand and updates the spawned and occupied lists.
     /// </summary>
+    /// <param name="customer">The Customer supposed to stand on this</param>
     /// <param name="stand">The first available stand, if any.</param>
     /// <returns>True if a stand is available; otherwise, false.</returns>
     public bool CheckForAvailableStand(CustomerAI customer, out Transform stand)
@@ -66,11 +67,11 @@ public class StandManager : MonoBehaviour
         stand = null;
         return false;
     }
-    #endregion
-
     public void ClearStands()
     {
         spawnedStands.Clear();
         occupiedStands.Clear();
     }
+    #endregion
+
 }

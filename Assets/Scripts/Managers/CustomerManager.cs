@@ -12,7 +12,7 @@ public class CustomerManager : MonoBehaviour
     #region Variables
 
     public List<CustomerAI> spawnedCustomers = new();
-    public List<Transform> spawnedGates = new();
+    public List<CustomerGate> spawnedGates = new();
     #endregion
 
     #region Functions
@@ -23,7 +23,7 @@ public class CustomerManager : MonoBehaviour
     public void FirstPositionAssign()
     {
         // Get reference to visible grids from the GridManager
-        var tempGrids = new List<Transform>(GameManager.Instance.gridManager.visibleGrids);
+        var tempGrids = new List<MyGrid>(GameManager.Instance.gridManager.visibleGrids);
 
         foreach (var customer in spawnedCustomers)
         {
@@ -34,12 +34,15 @@ public class CustomerManager : MonoBehaviour
             }
 
             // Randomly assign a grid to the customer
-            int randomIndex = Random.Range(0, tempGrids.Count);
-            Transform grid = tempGrids[randomIndex];
+            var randomIndex = Random.Range(0, tempGrids.Count);
+            var grid = tempGrids[randomIndex];
+            
+            if(!grid.walkable) continue;
+            
             tempGrids.RemoveAt(randomIndex);
 
             // Update customer's position
-            customer.transform.position = grid.position;
+            customer.transform.position = grid.transform.position;
         }
 
         // Update paths for all customers

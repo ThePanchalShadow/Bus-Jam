@@ -12,7 +12,7 @@ float offset = 0;
 
 private void Start()
 {
-    float centerX = stands[0].position.x/2;
+    var centerX = stands[0].position.x/2;
     Debug.Log(centerX);
     foreach (var stand in stands)
     {
